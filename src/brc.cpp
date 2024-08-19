@@ -33,11 +33,17 @@ int main() {
   long nr_newlines = 0;
   int i = 0;
 
+  auto start = std::chrono::high_resolution_clock::now();
+
   for (; i < filesize; ++i) {
     if (mappedfile[i] == '\n') {
       ++nr_newlines;
     }
   }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  std::cout << "Time taken by loop: " << elapsed.count() << " seconds" << std::endl;
 
   close(fd);
   munmap(mappedfile, filesize);
