@@ -12,9 +12,8 @@
 
 void print_reg(uint8x16_t reg);
 
-uint8x16_t positions = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 uint8x16_t newlines = vdupq_n_u8(10);
-uint8x16_t semicolons = vdupq_n_u8(59);
+uint8x16_t ones = vdupq_n_u8(1);
 
 int main() {
 
@@ -35,22 +34,19 @@ int main() {
   uint8_t* mappedfile = (uint8_t *) mmap(nullptr, filesize, PROT_READ, MAP_PRIVATE, fd, 0);
 
   long nr_newlines = 0;
-  uint8x16_t input;
   int i = 0;
-  size_t last = 0;
 
-  while (i+16 < filesize) {
-    input = vld1q_u8(&mappedfile[i]);
+  auto start = std::chrono::high_resolution_clock::now();
+
+  for (; i + 16 < filesize; i+=16) {
+    uint8x16_t input = vld1q_u8(&mappedfile[i]);
+    //print_reg(input);
     uint8x16_t compare = vceqq_u8(newlines, input);
-
-    if (vaddvq_u8(compare)) {
-      const uint8_t minimum = vminvq_u8(vorrq_u8(vmvnq_u8(compare), positions));
-      nr_newlines += 1;
-      i += minimum + 1;
-      last = i - 1;
-    } else {
-      i += 16;
-    }
+    //print_reg(compare);
+    uint8x16_t masked_ones = vandq_u8(compare, ones);
+    //print_reg(masked_ones);
+    nr_newlines += vaddvq_u8(masked_ones);
+    //printf("%d\n", vaddvq_u8(masked_ones));
   }
 
   for (; i < filesize; ++i) {
@@ -59,8 +55,20 @@ int main() {
     }
   }
 
-  close(fd);
-  munmap(mappedfile, filesize);
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  std::cout << "Time taken by loop: " << elapsed.count() << " seconds" << std::endl;
 
   std::cout << "newlines: " << nr_newlines << std::endl;
+
+  close(fd);
+  munmap(mappedfile, filesize);
+}
+
+void print_reg(uint8x16_t reg)
+{
+  for (int i = 0 ; i < 16; i++) {
+    printf("%x\t", reg[i]);
+  }
+  printf("\n");
 }
