@@ -31,7 +31,7 @@ int main() {
   uint8_t* mappedfile = (uint8_t *) mmap(nullptr, filesize, PROT_READ, MAP_PRIVATE, fd, 0);
 
   long nr_newlines = 0;
-  int i = 0;
+  long i = 0;
 
   auto start = std::chrono::high_resolution_clock::now();
 
