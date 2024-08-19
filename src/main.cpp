@@ -36,8 +36,10 @@ int main(int argc, char** argv) {
 
     while (vector_ops--) {
       input = vld1q_u8(&read_buf[i]);
-      uint8_t minimum = vminvq_u8(vorrq_u8(veorq_u8(vceqq_u8(newlines, input), ones), positions));
-      if (minimum != 255) {
+      uint8x16_t compare = vceqq_u8(newlines, input);
+
+      if (vaddvq_u8(compare)) {
+        uint8_t minimum = vminvq_u8(vorrq_u8(veorq_u8(compare, ones), positions));
         nr_newlines += 1;
         read_buf[i + minimum] = '\0';
         i -= 16;
