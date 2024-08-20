@@ -8,16 +8,13 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define BUFFER_SIZE 1024 * 16
-
 void print_reg(uint8x16_t reg);
 
-uint8x16_t newlines = vdupq_n_u8(10);
-uint8x16_t ones = vdupq_n_u8(1);
-
 int main() {
+  uint8x16_t ones = vdupq_n_u8(1);
+  uint8x16_t newlines = vdupq_n_u8(10);
 
-  int fd = open("../data/measurements1B.txt", O_RDONLY);
+  int fd = open("../data/measurements10M.txt", O_RDONLY);
 
   if (fd == -1) {
     std::cerr << "error opening file\n";
