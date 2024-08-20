@@ -35,8 +35,15 @@ int main() {
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  for (; i + 16 < filesize; i+=16) {
+  for (; i + 128 < filesize; i+=128) {
     nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i])), ones));
+    nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i+16])), ones));
+    nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i+32])), ones));
+    nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i+48])), ones));
+    nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i+64])), ones));
+    nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i+80])), ones));
+    nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i+96])), ones));
+    nr_newlines += vaddvq_u8(vandq_u8(vceqq_u8(newlines, vld1q_u8(&mappedfile[i+112])), ones));
   }
 
   for (; i < filesize; ++i) {
