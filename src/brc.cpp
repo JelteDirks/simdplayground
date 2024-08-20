@@ -8,13 +8,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define BUFFER_SIZE 1024 * 16
-
 void print_reg(uint8x16_t reg);
 
 int main() {
 
-  int fd = open("../data/measurements100M.txt", O_RDONLY);
+  int fd = open("../data/measurements10M.txt", O_RDONLY);
 
   if (fd == -1) {
     std::cerr << "error opening file\n";
